@@ -39,6 +39,7 @@ const AboutView = () => {
         <div className="flex items-center justify-between mb-4"> 
           <h1 className="text-2xl font-bold text-gray-800">About View</h1>
         </div>
+        <hr className="w-full h-5 border-purple-500 border-t-9" />
 
         <div>
           <label htmlFor="description" className="block mb-2 font-bold text-gray-700">Description:</label>
@@ -63,12 +64,12 @@ const AboutView = () => {
             </>
           ) : null}
 
-          <hr className="my-4 border-t-2 border-gray-300" />
+          <hr className="w-full h-5 border-purple-500 border-t-9" />
 
           <div className="flex justify-center"> {/* Centered button container */}
             <button onClick={handleSubmit} className="px-4 py-2 mr-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Submit</button>
-            <Link to="/AboutList" className="px-4 py-2 text-sm text-gray-700 bg-blue-300 rounded hover:bg-gray-400">Back</Link>
-          </div>
+            <Link to="/admin/AboutList" className="px-4 py-2 text-sm text-gray-700 bg-blue-300 rounded hover:bg-gray-400">Back</Link>
+            </div>
         </div>
       </div>
     </Layout>

@@ -24,22 +24,22 @@ const AboutList = () => {
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-gray-800">About List</h1>
           <Link to={`/admin/AboutAdd`} className="mr-2 text-blue-500 hover:text-blue-700">
-            <button className="px-5 py-2 text-white bg-blue-500 rounded hover:text-blue-500 hover:bg-slate-600">Add</button>
+            <button className="px-5 py-2 text-white bg-blue-500 rounded hover:text-blue-500 hover:bg-teal-200">Add</button>
           </Link>
         </div>
         <table className="w-full mx-auto overflow-hidden bg-white divide-y divide-gray-300 rounded-lg whitespace-nowrap custom-table-width">
-          <thead className="bg-gray-50">
-            <tr className="text-left text-gray-600">
-              <th className="px-6 py-4 text-sm font-semibold uppercase">Image</th>
-              <th className="px-6 py-4 text-sm font-semibold uppercase">Type</th>
-              <th className="px-6 py-4 text-sm font-semibold uppercase">Slug</th>
-              <th className="px-6 py-4 text-sm font-semibold uppercase">Action</th>
+          <thead className="bg-gray-900">
+            <tr className="text-left text-white">
+              <th className="px-6 py-4 text-lg font-semibold uppercase ">Image</th>
+              <th className="px-6 py-4 text-lg font-semibold uppercase">Type</th>
+              <th className="px-6 py-4 text-lg font-semibold uppercase">Slug</th>
+              <th className="px-6 py-4 text-lg font-semibold uppercase">Action</th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-gray-200">
             {list_data.map(data => (
-              <tr key={data._id} className="text-left text-gray-600">
+              <tr key={data._id} className="text-left text-gray-600 hover:bg-teal-200">
 
                 <td className="px-6 py-4"><img src={data.img_url} className='h-40 w-50'/></td>
                 <td className="px-6 py-4">{data.type}</td>
