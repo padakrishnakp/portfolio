@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { IoIosNotifications } from 'react-icons/io';
 import { Link } from 'react-router-dom';
-
+import { FaUserAstronaut } from "react-icons/fa";
+import { BiLogOutCircle } from "react-icons/bi";
 const Header = ({ notificationCount }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -20,9 +21,10 @@ const Header = ({ notificationCount }) => {
             onClick={toggleDropdown}
           />
           {dropdownOpen && (
-            <div className="absolute right-0 z-10 w-48 mt-2 bg-white border rounded-lg shadow-lg">
-              <Link to="/profile" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">Profile</Link>
-              <Link to="/logout" className="block px-4 py-2 text-gray-800 hover:bg-blue-100">Logout</Link>
+            <div className="absolute right-0 z-10 mt-2 border rounded-lg shadow-lg bg-cyan-300 w-14">
+              <Link to="/admin/ProfileView" className="block px-4 py-2 text-gray-800 hover:bg-blue-100"><FaUserAstronaut className='mt-2'/>
+              </Link>
+              <Link to="/logout" className="block px-4 py-2 text-gray-800 hover:bg-blue-100"><BiLogOutCircle/></Link>
             </div>
           )}
         </div>

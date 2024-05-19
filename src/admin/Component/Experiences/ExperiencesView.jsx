@@ -41,6 +41,9 @@ import { Link } from "react-router-dom";
         </div>
         <hr className="w-full h-5 border-purple-500 border-t-9" />
         <div>
+          <label htmlFor="companyName" className="block mb-2 font-bold text-gray-700">Header Title</label>
+          <textarea id="roll" value={roll} onChange={handleCompanyNameChange} className="w-full px-3 py-2 mb-4 border rounded-lg h-100 focus:outline-none focus:border-blue-500" placeholder="Enter Your Company"></textarea>
+
           <label htmlFor="companyName" className="block mb-2 font-bold text-gray-700">Company Name</label>
           <textarea id="roll" value={roll} onChange={handleCompanyNameChange} className="w-full px-3 py-2 mb-4 border rounded-lg h-100 focus:outline-none focus:border-blue-500" placeholder="Enter Your Company"></textarea>
 
