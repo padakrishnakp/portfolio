@@ -24,13 +24,13 @@ import ProfileView from './admin/Component/Profile/ProfileView';
 import HomeList from './admin/Component/Home/HomeList';
 import HomeAdd from './admin/Component/Home/HomeAdd';
 import HomeView from './admin/Component/Home/HomeView';
-
-
+import PrivateRoute from './PrivateRoute'; // Import PrivateRoute
+import PublicRoute from './PublicRoute'; // Import PublicRoute
 
 function App() {
   useEffect(() => {
     const storedSession = localStorage.getItem('session');
-    console.log("storedSession:-",storedSession)
+    console.log("storedSession:", storedSession);
     async function fetchIPAddress() {
       try {
         const response = await axios.get('https://api.ipify.org?format=json');
@@ -46,35 +46,33 @@ function App() {
 
     fetchIPAddress();
   }, []);
+
   return (
     <Router>
       <div className="App">
         <Routes>
           <Route path="/" element={<Layout><Home /></Layout>} />
           <Route path="/contact" element={<Layout><ContactUs /></Layout>} />
-          <Route path="/login" element={<Login />} />
-
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/AboutList" element={<AboutList />} />
-          <Route path="/admin/AboutView/:id" element={<AboutView />} />
-          <Route path="/admin/AboutAdd" element={<AboutAdd />} />
-          <Route path="/admin/SkillList" element={<SkillList />} />
-          <Route path="/admin/SkillAdd" element={<SkillAdd />} />
-          <Route path="/admin/SkillView/:id" element={<SkillView />} />
-          <Route path="/admin/experiencesList" element={<ExperiencesList />} />
-          <Route path="/admin/experiencesAdd" element={<ExperiencesAdd />} />
-          <Route path="/admin/experiencesView/:id" element={<ExperiencesView />} />
-          <Route path="/admin/ProjectAdd" element={<ProjectAdd />} />
-          <Route path="/admin/ProjectList" element={<ProjectList />} />
-          <Route path="/admin/ProjectView/:id" element={<ProjectView />} />
-          <Route path="/admin/ContactUsList" element={<ContactUsList />} />
-          <Route path="/admin/ContactUsView/:id" element={<ContactUsView />} />
-          <Route path="/admin/HomeList" element={<HomeList />} />
-          <Route path="/admin/HomeAdd" element={<HomeAdd />} />
-          <Route path="/admin/HomeView/:id" element={<HomeView />} />
-          <Route path="/admin/ProfileView" element={<ProfileView />} />
-          
-
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path="/admin" element={<PrivateRoute><Admin /></PrivateRoute>} />
+          <Route path="/admin/AboutList" element={<PrivateRoute><AboutList /></PrivateRoute>} />
+          <Route path="/admin/AboutView/:id" element={<PrivateRoute><AboutView /></PrivateRoute>} />
+          <Route path="/admin/AboutAdd" element={<PrivateRoute><AboutAdd /></PrivateRoute>} />
+          <Route path="/admin/SkillList" element={<PrivateRoute><SkillList /></PrivateRoute>} />
+          <Route path="/admin/SkillAdd" element={<PrivateRoute><SkillAdd /></PrivateRoute>} />
+          <Route path="/admin/SkillView/:id" element={<PrivateRoute><SkillView /></PrivateRoute>} />
+          <Route path="/admin/experiencesList" element={<PrivateRoute><ExperiencesList /></PrivateRoute>} />
+          <Route path="/admin/experiencesAdd" element={<PrivateRoute><ExperiencesAdd /></PrivateRoute>} />
+          <Route path="/admin/experiencesView/:id" element={<PrivateRoute><ExperiencesView /></PrivateRoute>} />
+          <Route path="/admin/ProjectAdd" element={<PrivateRoute><ProjectAdd /></PrivateRoute>} />
+          <Route path="/admin/ProjectList" element={<PrivateRoute><ProjectList /></PrivateRoute>} />
+          <Route path="/admin/ProjectView/:id" element={<PrivateRoute><ProjectView /></PrivateRoute>} />
+          <Route path="/admin/ContactUsList" element={<PrivateRoute><ContactUsList /></PrivateRoute>} />
+          <Route path="/admin/ContactUsView/:id" element={<PrivateRoute><ContactUsView /></PrivateRoute>} />
+          <Route path="/admin/HomeList" element={<PrivateRoute><HomeList /></PrivateRoute>} />
+          <Route path="/admin/HomeAdd" element={<PrivateRoute><HomeAdd /></PrivateRoute>} />
+          <Route path="/admin/HomeView/:id" element={<PrivateRoute><HomeView /></PrivateRoute>} />
+          <Route path="/admin/ProfileView" element={<PrivateRoute><ProfileView /></PrivateRoute>} />
         </Routes>
       </div>
     </Router>
