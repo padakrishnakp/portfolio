@@ -63,7 +63,7 @@ const SkillList = () => {
 
           <tbody className="divide-y divide-gray-200">
             {skill_list.map(data => (
-              <tr key={data._id} className="text-left text-gray-600 hover:bg-teal-200">
+              <tr key={data._id} className="text-2xl text-left text-gray-600 hover:bg-teal-200">
                 <td className="px-6 py-4">{data.title}</td>
                 <td className="px-6 py-4">{data.skills.join(', ')}</td>
                 <td className="px-6 py-4">{data.status ? "Active" : "Inactive"}</td>

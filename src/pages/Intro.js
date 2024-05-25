@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const Intro = () => {
-  const [homeList, setHomeList] = useState(null);
+  const [homeList, setHomeList] = useState([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
   const [typedText, setTypedText] = useState('');
@@ -24,8 +24,9 @@ const Intro = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (homeList && homeList[currentTextIndex]) {
+    let interval;
+    if (homeList.length > 0) {
+      interval = setInterval(() => {
         const currentText = homeList[currentTextIndex].input_typing[currentSentenceIndex];
         if (typedText.length < currentText.length) {
           setTypedText(currentText.substring(0, typedText.length + 1));
@@ -44,9 +45,9 @@ const Intro = () => {
             }
           }, 1000);
         }
-      }
-    }, 100);
-
+      }, 100);
+    }
+    
     return () => clearInterval(interval);
   }, [currentTextIndex, homeList, typedText, currentSentenceIndex]);
 
@@ -56,8 +57,12 @@ const Intro = () => {
         <h1 className='text-white'>I, am</h1>
         <h1 className='text-3xl font-semibold text-tertiary'>{typedText}</h1>
       </div>
-      {homeList && <p className='w-2/3 text-white'>{homeList[currentTextIndex].description}</p>}
-      <button className='px-10 py-3 text-white border-2 rounded border-tertiary hover:bg-forever hover:text-primary'>Get Started</button>
+      {homeList.length > 0 && (
+        <>
+          <p className='w-2/3 text-white'>{homeList[0].description}</p>
+          <button className='px-10 py-3 text-white border-2 rounded border-tertiary hover:bg-forever hover:text-primary'>Get Started</button>
+        </>
+      )}
     </div>
   );
 }

@@ -9,7 +9,7 @@ import { SparklesCore } from "../ui/sparkles.tsx";
 const Home = () => {
   return (
     <div>
-      <div className="relative z-10"> {/* Ensure Header is on top */}
+      <div className="relative z-10"> 
         <Header />
       </div>
       <SparklesCore

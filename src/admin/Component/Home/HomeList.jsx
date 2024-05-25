@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../../Layout';
 import { Link } from 'react-router-dom';
 import { FaRegEdit, FaTrash } from "react-icons/fa";
+import { IoEyeSharp } from 'react-icons/io5';
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 
 const HomeList = () => {
   const [listData, setListData] = useState([]);
@@ -12,12 +15,24 @@ const HomeList = () => {
 
   const fetchHomeList = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/v1/home/homeList');
-      if (!response.ok) {
+      const storedSession = localStorage.getItem('session');
+      const sessionData = JSON.parse(storedSession);
+      const userId = sessionData.userDetails?._id;
+      const response = await fetch("http://localhost:3001/api/v1/home/homeList", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          userId: userId
+        })
+      }); 
+       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
       const responseData = await response.json();
-      setListData(responseData.data); // Updated to setListData(responseData.data)
+      setListData(responseData.data); 
     } catch (error) {
       console.error('Error fetching home list:', error);
     }
@@ -25,17 +40,29 @@ const HomeList = () => {
 
   const handleDelete = async (_id) => {
     try {
-      const confirmed = window.confirm('Are you sure you want to delete this item?');
-      if (confirmed) {
-        const response = await fetch(`http://localhost:3001/api/v1/home/homeDelete/${_id}`, {
-          method: 'DELETE'
-        });
-        if (response.status === 200) {
-          window.location.href = '/admin/HomeList';
-          } else {
-          throw new Error('Failed to delete item');
-        }
-      }
+      confirmAlert({
+        title: 'Confirm Deletion',
+        message: 'Are you sure you want to delete this item?',
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: async () => {
+              const response = await fetch(`http://localhost:3001/api/v1/home/homeDelete/${_id}`, {
+                method: 'DELETE'
+              });
+              if (response.status === 200) {
+                fetchHomeList(); 
+              } else {
+                throw new Error('Failed to delete item');
+              }
+            }
+          },
+          {
+            label: 'No',
+            onClick: () => {}
+          }
+        ]
+      });
     } catch (error) {
       console.error('Error deleting item:', error);
     }
@@ -61,14 +88,16 @@ const HomeList = () => {
 
           <tbody className="divide-y divide-gray-200">
             {listData.map(data => (
-              <tr key={data._id} className="text-left text-gray-600 hover:bg-teal-200">
-                <td className="px-6 py-4">{data.description}</td> {/* Updated to data.description */}
-                <td className="px-6 py-4">{data.status ? "Active" : "Inactive"}</td> {/* Updated to data.status */}
-                <td className="flex items-center px-6 py-4 mt-10">
+              <tr key={data._id} className="text-2xl text-left text-gray-600 hover:bg-teal-200">
+                <td className="px-6 py-4">{data.input_typing.join(" ")}</td> 
+                <td className={`px-6 py-4 ${data.status ? 'text-green-500' : 'text-red-500'}`}>
+                  {data.status ? "Active" : "Inactive"}
+                </td>
+                <td className="flex items-center px-6 py-4 mt-10 space-x-4">
                   <Link to={`/admin/HomeView/${data._id}`} className="text-blue-500 hover:text-blue-700">
                     <FaRegEdit className="text-xl hover:text-blue-700" />
                   </Link>
-                  <FaTrash onClick={() => handleDelete(data._id)} className="text-xl hover:text-red-700" />
+                  <FaTrash onClick={() => handleDelete(data._id)} className="text-xl cursor-pointer hover:text-red-700" />
                 </td>
               </tr>
             ))}

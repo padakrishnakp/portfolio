@@ -7,54 +7,65 @@ import { GrProjects } from "react-icons/gr";
 import { MdContactPhone } from "react-icons/md";
 import { TiHomeOutline } from "react-icons/ti";
 
-
 const Sidebar = ({ setActivePage }) => {
-  return (
-    <aside className="w-64 bg-slate-300"> 
+  const handleMouseEnter = (e) => {
+    e.currentTarget.style.backgroundColor = 'white';
+    e.currentTarget.querySelector('a').style.color = 'black';
+    e.currentTarget.querySelector('a').style.transition = 'color 0.3s';
+  };
 
-      <div className="flex items-center justify-center h-20 p-4 font-bold text-slate-700 bg-cyan-300">
-        <h1 className='mt-5 text-2xl text-center hover:text-red-200'>Menu Item</h1>
+  const handleMouseLeave = (e) => {
+    e.currentTarget.style.backgroundColor = 'transparent';
+    e.currentTarget.querySelector('a').style.color = 'white';
+  };
+
+  return (
+    <aside style={{ width: '250px', height: '100vh', backgroundColor: '#1a1a1a', color: '#fff', padding: '20px', boxSizing: 'border-box' }}> 
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', padding: '20px', backgroundColor: '#2c2c2c', borderRadius: '10px', marginBottom: '30px' }}>
+        <img src="https://t3.ftcdn.net/jpg/05/17/79/88/360_F_517798849_WuXhHTpg2djTbfNf0FQAjzFEoluHpnct.jpg" alt="Profile" style={{ width: '50px', height: '50px', borderRadius: '50%', marginRight: '10px' }} />
+        <h2 style={{ margin: '0', fontSize: '20px' }}>Tania Andrew</h2>
       </div>
 
-      <ul className="py-20">
-        <li className="px-6 py-6 text-lg font-bold text-blue-600 cursor-pointer hover:bg-gray-700">
-          <Link to="/admin/HomeList" className="flex items-center">
-            <TiHomeOutline className="mr-2" />
-           Home
+      <ul style={{ listStyle: 'none', padding: '0' }}>
+        <li style={{ margin: '20px 0' }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <Link to="/admin/HomeList" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '10px 20px', borderRadius: '10px', transition: 'background-color 0.3s, color 0.3s' }}>
+            <TiHomeOutline style={{ marginRight: '10px' }} />
+            Home
           </Link>
         </li>
 
-        <li className="px-6 py-6 text-lg font-bold text-blue-600 cursor-pointer hover:bg-gray-700">
-          <Link to="/admin/AboutList" className="flex items-center">
-            <AccountBalanceWalletIcon className="mr-2" />
+        <li style={{ margin: '20px 0' }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <Link to="/admin/AboutList" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '10px 20px', borderRadius: '10px', transition: 'background-color 0.3s, color 0.3s' }}>
+            <AccountBalanceWalletIcon style={{ marginRight: '10px' }} />
             About List
           </Link>
         </li>
 
-        <li className="px-6 py-6 text-lg font-bold text-blue-600 cursor-pointer hover:bg-gray-700">
-          <Link to="/admin/SkillList" className="flex items-center">
-            <GiSkills className="mr-2" />
+        <li style={{ margin: '20px 0' }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <Link to="/admin/SkillList" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '10px 20px', borderRadius: '10px', transition: 'background-color 0.3s, color 0.3s' }}>
+            <GiSkills style={{ marginRight: '10px' }} />
             Skill List
           </Link>
         </li>
 
-        <li className="px-6 py-6 text-lg font-bold text-blue-600 cursor-pointer hover:bg-gray-700">
-          <Link to="/admin/experiencesList" className="flex items-center">
-            <HiCube className="mr-2" />
+        <li style={{ margin: '20px 0' }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <Link to="/admin/experiencesList" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '10px 20px', borderRadius: '10px', transition: 'background-color 0.3s, color 0.3s' }}>
+            <HiCube style={{ marginRight: '10px' }} />
             Experiences List
           </Link>
         </li>
 
-        <li className="px-6 py-6 text-lg font-bold text-blue-600 cursor-pointer hover:bg-gray-700">
-          <Link to="/admin/ProjectList" className="flex items-center">
-            <GrProjects className="mr-2" />
+        <li style={{ margin: '20px 0' }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <Link to="/admin/ProjectList" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '10px 20px', borderRadius: '10px', transition: 'background-color 0.3s, color 0.3s' }}>
+            <GrProjects style={{ marginRight: '10px' }} />
             Project 
           </Link>
         </li>
 
-        <li className="px-6 py-6 text-lg font-bold text-blue-600 cursor-pointer hover:bg-gray-700">
-          <Link to="/admin/ContactUsList" className="flex items-center">
-            <MdContactPhone className="mr-2"/>
+        <li style={{ margin: '20px 0' }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+          <Link to="/admin/ContactUsList" style={{ color: '#fff', textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '10px 20px', borderRadius: '10px', transition: 'background-color 0.3s, color 0.3s' }}>
+            <MdContactPhone style={{ marginRight: '10px' }}/>
             Contact Us 
           </Link>
         </li>

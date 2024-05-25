@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../Layout';
 import { FaRegEdit, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 
 const AboutList = () => {
-  const [list_data, setList_data] = useState([]);
+  const [list_data, setList_data] = useState([]); // Initialize as empty array
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     fetchAboutList();
@@ -20,27 +23,41 @@ const AboutList = () => {
       setList_data(data.list_data);
     } catch (error) {
       console.error('Error fetching about list:', error);
+    } finally {
+      setLoading(false); // Set loading to false after fetch completes
     }
   };
 
-  const handleDelete = async (_id) => {
-    try {
-      const confirmed = window.confirm('Are you sure you want to delete this item?');
-      if (confirmed) {
-        const response = await fetch(`http://localhost:3001/api/v1/about/delete/${_id}`, {
-          method: 'DELETE'
-        });
-        if (response.status === 200) {
-          window.location.href = '/admin/AboutList';
-          } else {
-          throw new Error('Failed to delete item');
+  const handleDelete = (_id) => {
+    confirmAlert({
+      title: 'Confirm Deletion',
+      message: 'Are you sure you want to delete this item?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: async () => {
+            try {
+              const response = await fetch(`http://localhost:3001/api/v1/about/delete/${_id}`, {
+                method: 'DELETE'
+              });
+              if (response.ok) {
+                fetchAboutList(); 
+              } else {
+                throw new Error('Failed to delete item');
+              }
+            } catch (error) {
+              console.error('Error deleting item:', error);
+            }
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => {}
         }
-      }
-    } catch (error) {
-      console.error('Error deleting item:', error);
-    }
+      ]
+    });
   };
-  
+
   return (
     <Layout>
       <div className="px-2 py-2 overflow-x-auto">
@@ -53,8 +70,7 @@ const AboutList = () => {
         <table className="w-full mx-auto overflow-hidden bg-white divide-y divide-gray-300 rounded-lg whitespace-nowrap custom-table-width">
           <thead className="bg-gray-900">
             <tr className="text-left text-white">
-              <th className="px-6 py-4 text-lg font-semibold uppercase">Image</th>
-              <th className="px-6 py-4 text-lg font-semibold uppercase">Type</th>
+              <th className="px-6 py-4 text-lg font-semibold uppercase">Video</th>
               <th className="px-6 py-4 text-lg font-semibold uppercase">Status</th>
               <th className="px-6 py-4 text-lg font-semibold uppercase">Action</th>
             </tr>
@@ -62,16 +78,21 @@ const AboutList = () => {
 
           <tbody className="divide-y divide-gray-200">
             {list_data.map(data => (
-              <tr key={data._id} className="text-left text-gray-600 hover:bg-teal-200">
+              <tr key={data._id} className="text-2xl text-left text-gray-600 hover:bg-teal-200">
                 <td className="px-6 py-4">
-                  <img src={`http://localhost:3001/${data.about_file}`} className='h-40 w-50' alt="About Image"/>
+                  <video className="w-full h-40" controls>
+                    <source src={`${data.about_video_path}`} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                 </td>
-                <td className="px-6 py-4">{data.type}</td>
-                <td className="px-6 py-4">{data.status.toString()}</td>                <td className="flex items-center px-6 py-4 mt-10">
+                <td className={`px-6 py-4 ${data.status ? 'text-green-500' : 'text-red-500'}`}>
+                  {data.status ? "Active" : "Inactive"}
+                </td>
+                <td className="flex items-center px-6 py-4 mt-10 space-x-4">
                   <Link to={`/admin/AboutView/${data._id}`} className="text-blue-500 hover:text-blue-700">
                     <FaRegEdit className="text-xl hover:text-blue-700" /> 
                   </Link>
-                  <FaTrash onClick={() => handleDelete(data._id)} className="text-xl hover:text-red-700" /> 
+                  <FaTrash onClick={() => handleDelete(data._id)} className="text-xl cursor-pointer hover:text-red-700" /> 
                 </td>
               </tr>
             ))}

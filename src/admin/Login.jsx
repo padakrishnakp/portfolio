@@ -7,38 +7,31 @@ import 'react-toastify/dist/ReactToastify.css';
 const LoginPageComponent = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [agreed, setAgreed] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Agreed to Terms:", agreed);
 
     try {
-      const response = await fetch("http://localhost:3001/api/v1/user/login", {
-        method: "POST",
+      const response = await fetch('http://localhost:3001/api/v1/user/login', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email_id: email,
-          password: password
-        })
+          password: password,
+        }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = await response.json();
+
+      if (response.status === 200) {
         localStorage.setItem('session', JSON.stringify(data));
-        console.log('Login successful:', data);
         window.location.href = '/admin';
       } else {
-        const errorData = await response.json();
-        console.error('Login failed:', errorData);
-        toast.error(`Login failed: ${errorData.message}`);
+        toast.error(`Login failed: ${data.message}`);
       }
     } catch (error) {
-      console.error('An error occurred:', error);
       toast.error(`An error occurred: ${error.message}`);
     }
   };
