@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import Layout from '../../Layout';
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const ExperiencesList = () => {
   const [list_data, setList_data] = useState(null);
@@ -12,7 +14,10 @@ const ExperiencesList = () => {
 
   const fetchAboutList = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/v1/experiences/experiencesList');
+      const storedSession = localStorage.getItem('session');
+  const sessionData = JSON.parse(storedSession);
+  const userId = sessionData.userDetails?._id;
+      const response = await fetch(`http://localhost:3001/api/v1/experiences/experiencesList/${userId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
@@ -22,23 +27,40 @@ const ExperiencesList = () => {
       console.error('Error fetching about list:', error);
     }
   };
+  const formatDateRange = (start, end) => {
+    const startDate = new Date(start).toISOString().split('T')[0];
+    const endDate = new Date(end).toISOString().split('T')[0];
+    return `${startDate} to ${endDate}`;
+  };
 
-  const handleDelete = async (_id) => {
-    try {
-      const confirmed = window.confirm('Are you sure you want to delete this item?');
-      if (confirmed) {
-        const response = await fetch(`http://localhost:3001/api/v1/experiences/experiencesDelete/${_id}`, {
-          method: 'DELETE'
-        });
-        if (response.status === 200) {
-          window.location.href = '/admin/experiencesList';
-          } else {
-          throw new Error('Failed to delete item');
+  const handleDelete = (_id) => {
+    confirmAlert({
+      title: 'Confirm Deletion',
+      message: 'Are you sure you want to delete this item?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: async () => {
+            try {
+              const response = await fetch(`http://localhost:3001/api/v1/experiences/experiencesDelete/${_id}`, {
+                method: 'DELETE'
+              });
+              if (response.ok) {
+                fetchAboutList(); 
+              } else {
+                throw new Error('Failed to delete item');
+              }
+            } catch (error) {
+              console.error('Error deleting item:', error);
+            }
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => {}
         }
-      }
-    } catch (error) {
-      console.error('Error deleting item:', error);
-    }
+      ]
+    });
   };
 
   return (
@@ -65,11 +87,12 @@ const ExperiencesList = () => {
             {list_data &&
               list_data.map(data => (
                 <tr key={data._id} className="text-2xl text-left text-gray-600 hover:bg-teal-200">
-                  <td className="px-6 py-4">{data.joying_dated}-{data.last_dated}</td>
+                <td className="px-6 py-4">{formatDateRange(data.joying_dated, data.last_dated)}</td>
                   <td className="px-6 py-4">{data.company_name || 'N/A'}</td>
                   <td className="px-6 py-4">{data.roll || 'N/A'}</td>
-                  <td className="px-6 py-4">{data.status ? "Active" : "Inactive"}</td>
-                  <td className="flex items-center px-6 py-4 mt-10">
+                  <td className={`px-6 py-4 ${data.status ? 'text-green-500' : 'text-red-500'}`}>
+                  {data.status ? "Active" : "Inactive"}
+                </td>                  <td className="flex items-center px-6 py-4 mt-10">
                     <Link to={`/admin/experiencesView/${data._id}`} className="text-blue-500 hover:text-blue-700">
                       <FaRegEdit className="text-xl hover:text-blue-700" />
                     </Link>

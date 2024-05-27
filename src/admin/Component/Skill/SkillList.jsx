@@ -2,36 +2,55 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../../Layout';
 import { FaRegEdit, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { confirmAlert } from 'react-confirm-alert'; 
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 
 const SkillList = () => {
   const [skill_list, setSkills] = useState([]);
+  
+  const storedSession = localStorage.getItem('session');
+  const sessionData = JSON.parse(storedSession);
+  const userId = sessionData.userDetails?._id;
 
   useEffect(() => {
-    fetchAboutList();
+    fetchSkillList(userId);
   }, []);
 
 
-  const handleDelete = async (_id) => {
-    try {
-      const confirmed = window.confirm('Are you sure you want to delete this item?');
-      if (confirmed) {
+  
+  const handleDelete = (_id) => {
+    confirmAlert({
+      title: 'Confirm Deletion',
+      message: 'Are you sure you want to delete this item?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: async () => {
+            try {
         const response = await fetch(`http://localhost:3001/api/v1/skill/skillDelete/${_id}`, {
-          method: 'DELETE'
-        });
-        if (response.status === 200) {
-          window.location.href = '/admin/SkillList';
-          } else {
-          throw new Error('Failed to delete item');
+        method: 'DELETE'
+              });
+              if (response.ok) {
+                fetchSkillList(); 
+              } else {
+                throw new Error('Failed to delete item');
+              }
+            } catch (error) {
+              console.error('Error deleting item:', error);
+            }
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => {}
         }
-      }
-    } catch (error) {
-      console.error('Error deleting item:', error);
-    }
+      ]
+    });
   };
 
-  const fetchAboutList = async () => {
+  const fetchSkillList = async (userId) => {
     try {
-      const response = await fetch('http://localhost:3001/api/v1/skill/skillList');
+      const response = await fetch(`http://localhost:3001/api/v1/skill/skillList/${userId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
@@ -66,8 +85,10 @@ const SkillList = () => {
               <tr key={data._id} className="text-2xl text-left text-gray-600 hover:bg-teal-200">
                 <td className="px-6 py-4">{data.title}</td>
                 <td className="px-6 py-4">{data.skills.join(', ')}</td>
-                <td className="px-6 py-4">{data.status ? "Active" : "Inactive"}</td>
-                <td className="flex items-center px-6 py-4 mt-10">
+                <td className={`px-6 py-4 ${data.status ? 'text-green-500' : 'text-red-500'}`}>
+                {data.status ? "Active" : "Inactive"}
+              </td>
+                  <td className="flex items-center px-6 py-4 mt-10">
                   <Link to={`/admin/SkillView/${data._id}`} className="text-blue-500 hover:text-blue-700">
                     <FaRegEdit className="text-xl hover:text-blue-700" />
                   </Link>

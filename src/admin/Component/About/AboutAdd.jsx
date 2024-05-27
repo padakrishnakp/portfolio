@@ -12,6 +12,7 @@ const AboutAdd = () => {
   const [status, setStatus] = useState('');
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
+  const [loading, setLoading] = useState(false); 
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -30,6 +31,8 @@ const AboutAdd = () => {
       notifyError('All fields are required.');
       return;
     }
+
+    setLoading(true); 
 
     try {
       const storedSession = localStorage.getItem('session');
@@ -57,6 +60,8 @@ const AboutAdd = () => {
     } catch (error) {
       console.error('Error submitting data:', error);
       notifyError('Error submitting data');
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -101,7 +106,9 @@ const AboutAdd = () => {
           <hr className="w-full h-5 border-purple-500 border-t-9" />
 
           <div className="flex justify-center">
-            <button onClick={handleSubmit} className="px-4 py-2 mr-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">Submit</button>
+            <button onClick={handleSubmit} className="px-4 py-2 mr-2 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
+              {loading ? 'Submitting...' : 'Submit'}
+            </button>
             <Link to="/admin/AboutList" id='aboutList' className="px-4 py-2 text-sm text-gray-700 bg-blue-300 rounded hover:bg-gray-400">Back</Link>
           </div>
         </div>

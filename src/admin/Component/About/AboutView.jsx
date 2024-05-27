@@ -1,52 +1,79 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../../Layout';
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const AboutView = () => {
-  const notifySuccess = () => toast.success("About Updated successfully", { autoClose: 3000 });
-  const notifyError = (message) => toast.error(message, { autoClose: 3000 });
-
+  const [aboutData, setAboutDetails] = useState(null);
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState('');
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
+  const [fileName, setFileName] = useState('');
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchAboutDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:3001/api/v1/about/view/${id}`, {
+          method: 'GET'
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const responseData = await response.json();
+        setAboutDetails(responseData.data);
+        setDescription(responseData.data.description);
+        setStatus(responseData.data.status.toString());
+        setFilePreview(responseData.data.about_video_path);
+        setFileName(responseData.data.about_video_path.split('/').pop()); // Extract the video name from the URL
+      } catch (e) {
+        console.error("Error:", e);
+      }
+    };
+
+    fetchAboutDetails();
+  }, [id]);
+
+  const notifySuccess = () => toast.success("About Updated successfully", { autoClose: 3000 });
+  const notifyError = (message) => toast.error(message, { autoClose: 3000 });
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFilePreview(reader.result);
-      };
-      reader.readAsDataURL(selectedFile);
+      const fileURL = URL.createObjectURL(selectedFile);
+      setFilePreview(fileURL);
+      setFileName(selectedFile.name); // Set the file name to be displayed
     }
   };
 
   const handleSubmit = async () => {
-    if (!description || !status || !file) {
+    if (!description || !status) {
       notifyError('All fields are required.');
       return;
     }
 
     try {
-      const storedSession = localStorage.getItem('session');
-      const sessionData = JSON.parse(storedSession);
-      const userId = sessionData.userDetails?._id;
       const formData = new FormData();
       formData.append('description', description);
       formData.append('status', status);
-      formData.append('about_media', file);
-      formData.append('userId', userId);
+      if (file) {
+        formData.append('about_media', file);
+      }
 
-      const response = await fetch("http://localhost:3001/api/v1/about/add", {
-        method: "POST",
+      const response = await fetch(`http://localhost:3001/api/v1/about/updated/${id}`, {
+        method: "PUT",
         body: formData,
       });
 
       if (response.ok) {
+        const responseData = await response.json();
+        setFilePreview(responseData.data.about_video_path);  // Update with the new video path
+        setFileName(responseData.data.about_video_path.split('/').pop()); // Update with the new video name
+        setFile(null); // Clear the file state to reflect the new video being the current one
         notifySuccess();
         await new Promise((resolve) => setTimeout(resolve, 2000));
         document.getElementById('aboutList').click();
@@ -81,9 +108,12 @@ const AboutView = () => {
           <input type="file" id="file" onChange={handleFileChange} className="mb-4" />
 
           {filePreview && (
-            <video controls className="w-40 mb-4 h-50">
-              <source src={filePreview} type="video/mp4" />
-            </video>
+            <div className="mb-4">
+              <video controls className="w-full h-auto">
+                <source src={filePreview} type="video/mp4" />
+              </video>
+              <p className="mt-2">File name: {fileName}</p>
+            </div>
           )}
 
           <label htmlFor="status" className="block mb-2 font-bold text-gray-700">Status</label>
@@ -109,6 +139,6 @@ const AboutView = () => {
       <ToastContainer />
     </Layout>
   );
-}
+};
 
 export default AboutView;

@@ -1,9 +1,14 @@
 import React, {useState } from 'react';
 import Layout from '../../Layout';
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const ExperiencesAdd = () => {
+
+  const notifySuccess = () => toast.success("Experience Added Successfully", { autoClose: 3000 });
+  const notifyError = (message) => toast.error(message, { autoClose: 3000 })
  
   const [companyName, setCompanyName] = useState('');
   const [roll, setRoll] = useState('');
@@ -15,12 +20,13 @@ const ExperiencesAdd = () => {
 
 
   const handleSubmit = async() => {
-    console.log('Company Name:', companyName);
-    console.log('Roll:', roll);
-    console.log('From Date:', fromDate);
-    console.log('End Date:', endDate);
-
-
+    const storedSession = localStorage.getItem('session');
+  const sessionData = JSON.parse(storedSession);
+  const userId = sessionData.userDetails?._id;
+  if (!companyName || !roll || !fromDate || !endDate || !status  ) {
+    notifyError('All fields are required and Experience cannot be empty.');
+    return;
+  }
     const response = await fetch("http://localhost:3001/api/v1/experiences/experiencesAdd", {
       method: "POST",
       headers: {
@@ -31,12 +37,15 @@ const ExperiencesAdd = () => {
         roll: roll,
         joying_dated:fromDate,
         last_dated:endDate,
-        status: status
+        status: status,
+        userId:userId
       })
     });
     console.log("response:-",response)
     if(response.status==200)
       {
+        notifySuccess();
+        await new Promise((resolve) => setTimeout(resolve, 3000)); 
      document.getElementById('experiencesList').click()
       }
       else {
@@ -94,6 +103,7 @@ const ExperiencesAdd = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </Layout>
   );
   
