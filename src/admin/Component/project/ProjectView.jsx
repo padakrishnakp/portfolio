@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../../Layout';
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const ProjectView = () => {
-  
+  const { id } = useParams();
   const [companyName, setCompanyName] = useState('');
   const [roll, setRoll] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null); // State variable to store image preview URL
+  const [imagePreview, setImagePreview] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`http://localhost:3001/api/v1/project/projectDetails/${id}`, {
+          method: 'GET',
+        });
+        const result = await response.json();
+        if (result.success) {
+          const data = result.data;
+          setCompanyName(data.project_name);
+          setRoll(data.project_description);
+          setFromDate(data.project_url);
+          setImagePreview(data.project_image);
+        }
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleCompanyNameChange = (e) => {
     setCompanyName(e.target.value);
@@ -34,9 +56,29 @@ const ProjectView = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // Implement your submit logic here
-    document.getElementById('projectList').click();
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append('project_name', companyName);
+    formData.append('project_description', roll);
+    formData.append('project_url', fromDate);
+    if (image) {
+      formData.append('about_file', image);
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/v1/project/updated/${id}`, {
+        method: 'PUT',
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.success) {
+        alert('Project updated successfully');
+      } else {
+        alert('Failed to update project');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+    }
   };
 
   return (
@@ -53,7 +95,7 @@ const ProjectView = () => {
           <label htmlFor="roll" className="block mb-2 font-bold text-gray-700">Project Description</label>
           <textarea id="roll" value={roll} onChange={handleRollChange} className="w-full px-3 py-2 mb-4 border rounded-lg h-400 focus:outline-none focus:border-blue-500" placeholder="Enter Project Description"></textarea>
 
-          <label htmlFor="fromDate" className="block mb-2 font-bold text-gray-700">Project url</label>
+          <label htmlFor="fromDate" className="block mb-2 font-bold text-gray-700">Project URL</label>
           <textarea id="fromDate" value={fromDate} onChange={handleFromDateChange} className="w-full px-3 py-2 mb-4 border rounded-lg h-100 focus:outline-none focus:border-blue-500" placeholder="Enter Project URL"></textarea>
 
           <label htmlFor="image" className="block mb-2 font-bold text-gray-700">Project Image</label>

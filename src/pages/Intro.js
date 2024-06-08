@@ -12,7 +12,12 @@ const Intro = () => {
 
   const fetchHome = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/v1/home/homeView");
+
+      const storedSession = localStorage.getItem('session');
+      const sessionData = JSON.parse(storedSession);
+      const userId = sessionData.userDetails?._id;
+
+      const response = await fetch(`http://localhost:3001/api/v1/home/homeView/${userId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch data");
       }

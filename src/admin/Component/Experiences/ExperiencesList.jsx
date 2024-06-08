@@ -6,27 +6,31 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const ExperiencesList = () => {
-  const [list_data, setList_data] = useState(null);
+  const [listData, setListData] = useState([]);
 
   useEffect(() => {
-    fetchAboutList();
+    fetchExperiencesList();
   }, []);
 
-  const fetchAboutList = async () => {
+  const fetchExperiencesList = async () => {
     try {
       const storedSession = localStorage.getItem('session');
-  const sessionData = JSON.parse(storedSession);
-  const userId = sessionData.userDetails?._id;
+      if (!storedSession) throw new Error('No session found');
+      const sessionData = JSON.parse(storedSession);
+      const userId = sessionData?.userDetails?._id;
+      if (!userId) throw new Error('User ID not found');
+
       const response = await fetch(`http://localhost:3001/api/v1/experiences/experiencesList/${userId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
       const data = await response.json();
-      setList_data(data.list_data);
+      setListData(data.experiences_view);
     } catch (error) {
-      console.error('Error fetching about list:', error);
+      console.error('Error fetching experiences list:', error);
     }
   };
+
   const formatDateRange = (start, end) => {
     const startDate = new Date(start).toISOString().split('T')[0];
     const endDate = new Date(end).toISOString().split('T')[0];
@@ -46,7 +50,7 @@ const ExperiencesList = () => {
                 method: 'DELETE'
               });
               if (response.ok) {
-                fetchAboutList(); 
+                fetchExperiencesList(); 
               } else {
                 throw new Error('Failed to delete item');
               }
@@ -77,22 +81,23 @@ const ExperiencesList = () => {
             <tr className="text-left text-white">
               <th className="px-6 py-4 text-lg font-semibold uppercase">Years</th>
               <th className="px-6 py-4 text-lg font-semibold uppercase">Company Name</th>
-              <th className="px-6 py-4 text-lg font-semibold uppercase">Roll</th>
+              <th className="px-6 py-4 text-lg font-semibold uppercase">Role</th>
               <th className="px-6 py-4 text-lg font-semibold uppercase">Status</th>
               <th className="px-6 py-4 text-lg font-semibold uppercase">Action</th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-gray-200">
-            {list_data &&
-              list_data.map(data => (
+            {listData &&
+              listData.map(data => (
                 <tr key={data._id} className="text-2xl text-left text-gray-600 hover:bg-teal-200">
-                <td className="px-6 py-4">{formatDateRange(data.joying_dated, data.last_dated)}</td>
+                  <td className="px-6 py-4">{formatDateRange(data.joying_dated, data.last_dated)}</td>
                   <td className="px-6 py-4">{data.company_name || 'N/A'}</td>
                   <td className="px-6 py-4">{data.roll || 'N/A'}</td>
                   <td className={`px-6 py-4 ${data.status ? 'text-green-500' : 'text-red-500'}`}>
-                  {data.status ? "Active" : "Inactive"}
-                </td>                  <td className="flex items-center px-6 py-4 mt-10">
+                    {data.status ? "Active" : "Inactive"}
+                  </td>                  
+                  <td className="flex items-center px-6 py-4 mt-10">
                     <Link to={`/admin/experiencesView/${data._id}`} className="text-blue-500 hover:text-blue-700">
                       <FaRegEdit className="text-xl hover:text-blue-700" />
                     </Link>
